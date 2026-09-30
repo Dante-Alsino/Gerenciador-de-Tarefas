@@ -4,3 +4,10 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+
+# Documentações Externas 
+*.pdf
+
+# Arquivos de Controle Interno
+documentacao.md
+tasks.md
