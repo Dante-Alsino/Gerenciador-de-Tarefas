@@ -2,6 +2,10 @@
   <h1>✅ Gerenciador de Tarefas</h1>
   <p><strong>Uma aplicação web ágil e client-side para organização de rotinas e aumento de produtividade.</strong></p>
 
+  <p>
+    🌍 <strong>Versão Publicada:</strong> <a href="#">Acesse o projeto online aqui</a> *(Em breve)*
+  </p>
+
   <!-- Badges -->
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />

@@ -3,44 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador de Tarefas</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <title>Gerenciador de Tarefas - Kanban Minimalista</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
-    <header>
-        <h1>✅ Gerenciador de Tarefas</h1>
+    <header class="app-header">
+        <h1>Gerenciador de Tarefas</h1>
+        <div class="dashboard" id="dashboard">
+            <div class="stat"><span>Total:</span> <strong id="stat-total">0</strong></div>
+            <div class="stat"><span>Pendentes:</span> <strong id="stat-pending">0</strong></div>
+            <div class="stat"><span>Concluídas:</span> <strong id="stat-done">0</strong></div>
+        </div>
     </header>
 
-    <main>
-        <!-- Área de Cadastro -->
-        <section id="area-cadastro">
-            <h2>Adicionar Nova Tarefa</h2>
-            <!-- O formulário será construído aqui -->
+    <section class="task-creation">
+        <form id="task-form" class="task-form">
+            <div class="form-group">
+                <label for="task-desc">Descrição</label>
+                <input type="text" id="task-desc" placeholder="O que precisa ser feito?" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="task-category">Categoria</label>
+                <input type="text" id="task-category" placeholder="Ex: Estudos" required>
+            </div>
+
+            <div class="form-group">
+                <label for="task-difficulty">Dificuldade</label>
+                <select id="task-difficulty" required>
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="facil">Fácil</option>
+                    <option value="moderado">Moderado</option>
+                    <option value="dificil">Difícil</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="task-date">Prazo</label>
+                <input type="date" id="task-date" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Adicionar Tarefa</button>
+        </form>
+    </section>
+
+    <main class="kanban-board">
+        <!-- Coluna Fácil -->
+        <section class="column column-facil">
+            <div class="column-header">
+                <h2>Fácil</h2>
+            </div>
+            <div class="column-content" id="col-facil">
+                <!-- Cards renderizados via JS -->
+            </div>
         </section>
 
-        <!-- Área de Filtros e Indicadores -->
-        <section id="area-controles">
-            <div id="indicadores">
-                <!-- Resumo será inserido aqui -->
+        <!-- Coluna Moderado -->
+        <section class="column column-moderado">
+            <div class="column-header">
+                <h2>Moderado</h2>
             </div>
-            <div id="filtros">
-                <!-- Filtros serão inseridos aqui -->
+            <div class="column-content" id="col-moderado">
+                <!-- Cards renderizados via JS -->
             </div>
         </section>
 
-        <!-- Área de Apresentação das Tarefas -->
-        <section id="area-tarefas">
-            <h2>Lista de Tarefas</h2>
-            <div id="mensagem-vazia">
-                <p>Nenhuma tarefa cadastrada. Adicione uma tarefa para começar!</p>
+        <!-- Coluna Difícil -->
+        <section class="column column-dificil">
+            <div class="column-header">
+                <h2>Difícil</h2>
             </div>
-            <ul id="lista-tarefas">
-                <!-- Tarefas renderizadas pelo JS aparecerão aqui -->
-            </ul>
+            <div class="column-content" id="col-dificil">
+                <!-- Cards renderizados via JS -->
+            </div>
+        </section>
+
+        <!-- Coluna Concluído -->
+        <section class="column column-concluido">
+            <div class="column-header">
+                <h2>Concluído</h2>
+            </div>
+            <div class="column-content" id="col-concluido">
+                <!-- Cards renderizados via JS -->
+            </div>
         </section>
     </main>
 
-    <script src="./js/script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>

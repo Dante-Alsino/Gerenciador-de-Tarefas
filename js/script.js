@@ -1,15 +1,7 @@
-// Referências do DOM
-const listaTarefas = document.getElementById('lista-tarefas');
-const mensagemVazia = document.getElementById('mensagem-vazia');
+/**
+ * Gerenciador de Tarefas - Kanban Minimalista
+ * Arquivo reservado para a implementação da lógica JavaScript.
+ */
 
-// Estado da Aplicação (Array de objetos)
-let tarefas = [];
-
-// Função de inicialização
-function inicializarApp() {
-    console.log("Gerenciador de Tarefas iniciado!");
-    // Lógica para buscar do localStorage entrará aqui em breve
-}
-
-// Inicializa a aplicação ao carregar
-document.addEventListener('DOMContentLoaded', inicializarApp);
+// TODO: Implementar Fase 2 a 5 do tasks.md aqui
+// Dica: Inicie capturando os elementos do DOM e configurando o Event Listener de submit do form.

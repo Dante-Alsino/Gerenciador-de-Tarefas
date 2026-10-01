@@ -5,9 +5,8 @@ Thumbs.db
 .idea/
 *.log
 
-# Documentações Externas 
+# Documentações Externas (Não subir na entrega do projeto)
 *.pdf
 
-# Arquivos de Controle Interno
-documentacao.md
-tasks.md
+# Pasta de Controle Interno (Ignorada no repositório oficial)
+documentacao/
