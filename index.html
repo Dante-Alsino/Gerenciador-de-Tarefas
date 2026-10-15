@@ -47,6 +47,24 @@
         </form>
     </section>
 
+    <section class="task-filters" aria-label="Filtros de tarefas">
+        <div class="filter-group">
+            <label for="filter-status">Situação:</label>
+            <select id="filter-status">
+                <option value="todas">Todas</option>
+                <option value="pendente">Pendentes</option>
+                <option value="concluida">Concluídas</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-category">Categoria:</label>
+            <select id="filter-category">
+                <option value="todas">Todas</option>
+            </select>
+        </div>
+    </section>
+
     <main class="kanban-board">
         <!-- Coluna Fácil -->
         <section class="column column-facil">

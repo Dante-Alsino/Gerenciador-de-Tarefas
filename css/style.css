@@ -134,6 +134,38 @@ input:focus, select:focus {
     background-color: var(--color-primary-hover);
 }
 
+/* --- Barra de Filtros --- */
+.task-filters {
+    background: var(--bg-surface);
+    padding: 16px 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 28px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.filter-group select {
+    min-width: 170px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
 /* --- Kanban Board --- */
 .kanban-board {
     display: grid;
