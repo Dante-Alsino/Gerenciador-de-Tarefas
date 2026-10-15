@@ -1,10 +1,14 @@
 /**
  * Gerenciador de Tarefas - Kanban Minimalista
- * Implementação: 
+ * Implementação Completa:
  * - Fase 2: Lógica Base
  * - Fase 3: Interatividade (Concluir, Desfazer, Excluir)
  * - Fase 4: Indicadores (Dashboard) e Filtros (Situação e Categoria)
+ * - Fase 5: Persistência de Dados (Local Storage) e Situação Inicial
  */
+
+// Chave para armazenamento no LocalStorage do navegador
+const STORAGE_KEY = 'kanban_tasks_app';
 
 // --- 1. Estado da Aplicação (State) ---
 let tasks = [];
@@ -19,6 +23,8 @@ const currentFilters = {
 const DOM = {
     form: document.getElementById('task-form'),
     board: document.querySelector('.kanban-board'),
+    emptyState: document.getElementById('empty-state'),
+    columnsList: document.querySelectorAll('.kanban-board .column'),
     inputs: {
         desc: document.getElementById('task-desc'),
         category: document.getElementById('task-category'),
@@ -42,7 +48,38 @@ const DOM = {
     }
 };
 
-// --- 3. Inicialização e Atualizações Gerais ---
+// --- 3. Camada de Persistência (Local Storage) ---
+
+/**
+ * Salva a lista de tarefas no localStorage em formato JSON
+ */
+function saveTasksToStorage() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    } catch (error) {
+        console.error('Erro ao salvar tarefas no LocalStorage:', error);
+    }
+}
+
+/**
+ * Carrega e recupera as tarefas salvas do localStorage
+ */
+function loadTasksFromStorage() {
+    try {
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+            const parsed = JSON.parse(storedData);
+            tasks = Array.isArray(parsed) ? parsed : [];
+        } else {
+            tasks = [];
+        }
+    } catch (error) {
+        console.error('Erro ao ler dados do LocalStorage:', error);
+        tasks = [];
+    }
+}
+
+// --- 4. Indicadores e Filtros ---
 
 /**
  * Atualiza os contadores numéricos do Dashboard no Header.
@@ -75,7 +112,6 @@ function updateCategoryFilterOptions() {
         DOM.filters.category.appendChild(option);
     });
 
-    // Mantém a categoria selecionada se ela ainda existir no cadastro
     if (categories.includes(previousSelection)) {
         DOM.filters.category.value = previousSelection;
         currentFilters.category = previousSelection;
@@ -85,7 +121,8 @@ function updateCategoryFilterOptions() {
     }
 }
 
-// --- 4. Submissão de Nova Tarefa ---
+// --- 5. Ações do Usuário (Adicionar, Concluir, Desfazer, Excluir) ---
+
 DOM.form.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -109,23 +146,22 @@ DOM.form.addEventListener('submit', function(event) {
     };
 
     tasks.push(newTask);
+    saveTasksToStorage();
 
     DOM.form.reset();
     DOM.inputs.desc.focus();
 
-    // Sincroniza indicadores, opções de filtro e redesenha a tela
     updateDashboard();
     updateCategoryFilterOptions();
     renderBoard();
 });
-
-// --- 5. Interatividade (Concluir, Desfazer e Excluir) ---
 
 function toggleTaskStatus(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
 
     task.status = task.status === 'pendente' ? 'concluida' : 'pendente';
+    saveTasksToStorage();
 
     updateDashboard();
     renderBoard();
@@ -136,13 +172,14 @@ function deleteTask(id) {
     if (!confirmed) return;
 
     tasks = tasks.filter(t => t.id !== id);
+    saveTasksToStorage();
 
     updateDashboard();
     updateCategoryFilterOptions();
     renderBoard();
 }
 
-// Event Delegation para botões de ação nos cards
+// Delegação de Eventos para os botões de ação nos cards
 DOM.board.addEventListener('click', function(event) {
     const actionButton = event.target.closest('button[data-action]');
     if (!actionButton) return;
@@ -157,7 +194,7 @@ DOM.board.addEventListener('click', function(event) {
     }
 });
 
-// --- 6. Eventos dos Filtros ---
+// Eventos de alteração dos filtros
 DOM.filters.status.addEventListener('change', function(event) {
     currentFilters.status = event.target.value;
     renderBoard();
@@ -168,14 +205,25 @@ DOM.filters.category.addEventListener('change', function(event) {
     renderBoard();
 });
 
-// --- 7. Renderização com Pipeline de Filtragem ---
+// --- 6. Renderização Dinâmica e Gestão do Estado Vazio ---
 function renderBoard() {
-    // 1. Limpa todas as colunas
+    // 1. Tratamento da Situação Inicial (Sem tarefas cadastradas)
+    if (tasks.length === 0) {
+        DOM.emptyState.classList.remove('hidden');
+        DOM.columnsList.forEach(col => col.style.display = 'none');
+        return;
+    }
+
+    // Se existem tarefas, garante que o estado vazio está oculto e as colunas visíveis
+    DOM.emptyState.classList.add('hidden');
+    DOM.columnsList.forEach(col => col.style.display = 'flex');
+
+    // 2. Limpa o conteúdo interno de todas as colunas
     Object.values(DOM.columns).forEach(column => {
         column.innerHTML = '';
     });
 
-    // 2. Aplica os filtros ativos sem mutar o array tasks original
+    // 3. Aplica os filtros ativos sem mutar os dados originais
     const filteredTasks = tasks.filter(task => {
         const matchesStatus =
             currentFilters.status === 'todas' ||
@@ -189,7 +237,7 @@ function renderBoard() {
         return matchesStatus && matchesCategory;
     });
 
-    // 3. Monta e distribui os cards filtrados
+    // 4. Cria e distribui os cards
     filteredTasks.forEach(task => {
         const isDone = task.status === 'concluida';
         const card = document.createElement('article');
@@ -230,5 +278,13 @@ function renderBoard() {
     });
 }
 
-// Inicia os contadores zerados
-updateDashboard();
+// --- 7. Inicialização da Aplicação (Bootstrap) ---
+function init() {
+    loadTasksFromStorage();
+    updateDashboard();
+    updateCategoryFilterOptions();
+    renderBoard();
+}
+
+// Inicia o app restaurando o estado do navegador
+init();
