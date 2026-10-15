@@ -1,24 +1,39 @@
 /**
  * Gerenciador de Tarefas - Kanban Minimalista
- * Implementação: 
+ * Implementação Completa: Fases 1 a 6
+ * - Fase 1: Estrutura & Estilo
  * - Fase 2: Lógica Base
  * - Fase 3: Interatividade (Concluir, Desfazer, Excluir)
- * - Fase 4: Indicadores (Dashboard) e Filtros (Situação e Categoria)
+ * - Fase 4: Indicadores & Filtros
+ * - Fase 5: Persistência no LocalStorage e Situação Inicial
+ * - Fase 6: Desafios Opcionais (Dark/Light Mode, Busca em Tempo Real, Ordenação, Limpar Concluídas, Barra de Progresso)
  */
+
+// Chaves de armazenamento no LocalStorage
+const STORAGE_KEY = 'kanban_tasks_app';
+const THEME_KEY = 'kanban_theme_preference';
 
 // --- 1. Estado da Aplicação (State) ---
 let tasks = [];
 
-// Estado ativo dos filtros (visualização não destrutiva)
+// Estado reativo dos filtros e ordenação
 const currentFilters = {
     status: 'todas',
-    category: 'todas'
+    category: 'todas',
+    search: '',
+    sort: 'padrao'
 };
 
 // --- 2. Elementos do DOM em Cache ---
 const DOM = {
     form: document.getElementById('task-form'),
     board: document.querySelector('.kanban-board'),
+    emptyState: document.getElementById('empty-state'),
+    columnsList: document.querySelectorAll('.kanban-board .column'),
+    btnClearDone: document.getElementById('btn-clear-done'),
+    themeToggle: document.getElementById('btn-theme-toggle'),
+    themeIcon: document.getElementById('theme-icon'),
+    themeText: document.getElementById('theme-text'),
     inputs: {
         desc: document.getElementById('task-desc'),
         category: document.getElementById('task-category'),
@@ -34,34 +49,98 @@ const DOM = {
     stats: {
         total: document.getElementById('stat-total'),
         pending: document.getElementById('stat-pending'),
-        done: document.getElementById('stat-done')
+        done: document.getElementById('stat-done'),
+        progress: document.getElementById('stat-progress'),
+        progressFill: document.getElementById('progress-bar-fill')
     },
     filters: {
         status: document.getElementById('filter-status'),
-        category: document.getElementById('filter-category')
+        category: document.getElementById('filter-category'),
+        search: document.getElementById('filter-search'),
+        sort: document.getElementById('filter-sort')
     }
 };
 
-// --- 3. Inicialização e Atualizações Gerais ---
+// --- 3. Camada de Persistência (Local Storage) ---
 
-/**
- * Atualiza os contadores numéricos do Dashboard no Header.
- * Os indicadores sempre representam a base total de dados armazenados.
- */
+function saveTasksToStorage() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    } catch (error) {
+        console.error('Erro ao salvar tarefas no LocalStorage:', error);
+    }
+}
+
+function loadTasksFromStorage() {
+    try {
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+            const parsed = JSON.parse(storedData);
+            tasks = Array.isArray(parsed) ? parsed : [];
+        } else {
+            tasks = [];
+        }
+    } catch (error) {
+        console.error('Erro ao ler tarefas do LocalStorage:', error);
+        tasks = [];
+    }
+}
+
+// --- 4. Motor de Tema (Dark Mode / Light Mode) ---
+
+function initTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme) {
+        applyTheme(savedTheme, false);
+    } else {
+        // Respeita a preferência do sistema operacional do usuário
+        const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(systemPrefersDark ? 'dark' : 'light', false);
+    }
+}
+
+function applyTheme(theme, save = true) {
+    document.documentElement.setAttribute('data-theme', theme);
+
+    if (theme === 'dark') {
+        DOM.themeIcon.textContent = '☀️';
+        DOM.themeText.textContent = 'Claro';
+    } else {
+        DOM.themeIcon.textContent = '🌙';
+        DOM.themeText.textContent = 'Escuro';
+    }
+
+    if (save) {
+        localStorage.setItem(THEME_KEY, theme);
+    }
+}
+
+DOM.themeToggle.addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(newTheme, true);
+});
+
+// --- 5. Dashboard, Indicadores e Progresso ---
+
 function updateDashboard() {
     const total = tasks.length;
     const done = tasks.filter(t => t.status === 'concluida').length;
     const pending = total - done;
+    const percentage = total > 0 ? Math.round((done / total) * 100) : 0;
 
     DOM.stats.total.textContent = total;
     DOM.stats.pending.textContent = pending;
     DOM.stats.done.textContent = done;
+    DOM.stats.progress.textContent = `${percentage}%`;
+    DOM.stats.progressFill.style.width = `${percentage}%`;
+
+    // Habilita ou desabilita o botão "Limpar Concluídas"
+    if (DOM.btnClearDone) {
+        DOM.btnClearDone.disabled = done === 0;
+    }
 }
 
-/**
- * Atualiza dinamicamente as opções do seletor de Categoria com base
- * nas categorias reais presentes nas tarefas cadastradas.
- */
 function updateCategoryFilterOptions() {
     const categories = [...new Set(tasks.map(t => t.categoria.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     const previousSelection = DOM.filters.category.value;
@@ -75,7 +154,6 @@ function updateCategoryFilterOptions() {
         DOM.filters.category.appendChild(option);
     });
 
-    // Mantém a categoria selecionada se ela ainda existir no cadastro
     if (categories.includes(previousSelection)) {
         DOM.filters.category.value = previousSelection;
         currentFilters.category = previousSelection;
@@ -85,7 +163,8 @@ function updateCategoryFilterOptions() {
     }
 }
 
-// --- 4. Submissão de Nova Tarefa ---
+// --- 6. Ações do Usuário (Adicionar, Concluir, Excluir, Limpar Concluídas) ---
+
 DOM.form.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -109,23 +188,22 @@ DOM.form.addEventListener('submit', function(event) {
     };
 
     tasks.push(newTask);
+    saveTasksToStorage();
 
     DOM.form.reset();
     DOM.inputs.desc.focus();
 
-    // Sincroniza indicadores, opções de filtro e redesenha a tela
     updateDashboard();
     updateCategoryFilterOptions();
     renderBoard();
 });
-
-// --- 5. Interatividade (Concluir, Desfazer e Excluir) ---
 
 function toggleTaskStatus(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
 
     task.status = task.status === 'pendente' ? 'concluida' : 'pendente';
+    saveTasksToStorage();
 
     updateDashboard();
     renderBoard();
@@ -136,11 +214,28 @@ function deleteTask(id) {
     if (!confirmed) return;
 
     tasks = tasks.filter(t => t.id !== id);
+    saveTasksToStorage();
 
     updateDashboard();
     updateCategoryFilterOptions();
     renderBoard();
 }
+
+// Botão para excluir todas as concluídas em lote
+DOM.btnClearDone.addEventListener('click', function() {
+    const doneTasksCount = tasks.filter(t => t.status === 'concluida').length;
+    if (doneTasksCount === 0) return;
+
+    const confirmed = window.confirm(`Deseja realmente excluir todas as ${doneTasksCount} tarefas concluídas?`);
+    if (!confirmed) return;
+
+    tasks = tasks.filter(t => t.status !== 'concluida');
+    saveTasksToStorage();
+
+    updateDashboard();
+    updateCategoryFilterOptions();
+    renderBoard();
+});
 
 // Event Delegation para botões de ação nos cards
 DOM.board.addEventListener('click', function(event) {
@@ -157,7 +252,8 @@ DOM.board.addEventListener('click', function(event) {
     }
 });
 
-// --- 6. Eventos dos Filtros ---
+// --- 7. Eventos de Busca, Filtro e Ordenação ---
+
 DOM.filters.status.addEventListener('change', function(event) {
     currentFilters.status = event.target.value;
     renderBoard();
@@ -168,15 +264,36 @@ DOM.filters.category.addEventListener('change', function(event) {
     renderBoard();
 });
 
-// --- 7. Renderização com Pipeline de Filtragem ---
+DOM.filters.search.addEventListener('input', function(event) {
+    currentFilters.search = event.target.value.toLowerCase().trim();
+    renderBoard();
+});
+
+DOM.filters.sort.addEventListener('change', function(event) {
+    currentFilters.sort = event.target.value;
+    renderBoard();
+});
+
+// --- 8. Renderização Inteligente (Filtros + Ordenação) ---
+
 function renderBoard() {
-    // 1. Limpa todas as colunas
+    // 1. Estado Inicial Vazio
+    if (tasks.length === 0) {
+        DOM.emptyState.classList.remove('hidden');
+        DOM.columnsList.forEach(col => col.style.display = 'none');
+        return;
+    }
+
+    DOM.emptyState.classList.add('hidden');
+    DOM.columnsList.forEach(col => col.style.display = 'flex');
+
+    // 2. Limpa colunas
     Object.values(DOM.columns).forEach(column => {
         column.innerHTML = '';
     });
 
-    // 2. Aplica os filtros ativos sem mutar o array tasks original
-    const filteredTasks = tasks.filter(task => {
+    // 3. Aplica Filtros (Situação, Categoria e Busca por Texto)
+    let visibleTasks = tasks.filter(task => {
         const matchesStatus =
             currentFilters.status === 'todas' ||
             (currentFilters.status === 'pendente' && task.status === 'pendente') ||
@@ -186,11 +303,29 @@ function renderBoard() {
             currentFilters.category === 'todas' ||
             task.categoria.toLowerCase() === currentFilters.category.toLowerCase();
 
-        return matchesStatus && matchesCategory;
+        const matchesSearch =
+            !currentFilters.search ||
+            task.descricao.toLowerCase().includes(currentFilters.search) ||
+            task.categoria.toLowerCase().includes(currentFilters.search);
+
+        return matchesStatus && matchesCategory && matchesSearch;
     });
 
-    // 3. Monta e distribui os cards filtrados
-    filteredTasks.forEach(task => {
+    // 4. Aplica Ordenação
+    const difficultyWeight = { facil: 1, moderado: 2, dificil: 3 };
+
+    if (currentFilters.sort === 'data-asc') {
+        visibleTasks.sort((a, b) => new Date(a.data) - new Date(b.data));
+    } else if (currentFilters.sort === 'data-desc') {
+        visibleTasks.sort((a, b) => new Date(b.data) - new Date(a.data));
+    } else if (currentFilters.sort === 'dificuldade-asc') {
+        visibleTasks.sort((a, b) => difficultyWeight[a.dificuldade] - difficultyWeight[b.dificuldade]);
+    } else if (currentFilters.sort === 'dificuldade-desc') {
+        visibleTasks.sort((a, b) => difficultyWeight[b.dificuldade] - difficultyWeight[a.dificuldade]);
+    }
+
+    // 5. Renderização dos cards filtrados e ordenados
+    visibleTasks.forEach(task => {
         const isDone = task.status === 'concluida';
         const card = document.createElement('article');
         card.className = `card ${task.dificuldade} ${isDone ? 'concluida' : ''}`;
@@ -230,5 +365,13 @@ function renderBoard() {
     });
 }
 
-// Inicia os contadores zerados
-updateDashboard();
+// --- 9. Inicialização Geral (Bootstrap) ---
+function init() {
+    initTheme();
+    loadTasksFromStorage();
+    updateDashboard();
+    updateCategoryFilterOptions();
+    renderBoard();
+}
+
+init();

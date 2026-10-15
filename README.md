@@ -10,14 +10,14 @@
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-success?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Status-Conclu%C3%ADdo-success?style=for-the-badge" alt="Status" />
 </div>
 
 <br>
 
 ## 📖 Sobre o Projeto
 
-Manter uma rotina organizada é o primeiro passo para o sucesso. O **Gerenciador de Tarefas** é uma aplicação interativa *Single-Page* construída inteiramente com Vanilla JavaScript. Ele resolve o problema do esquecimento e da procrastinação permitindo o registro rápido de atividades diárias, categorização e acompanhamento de status.
+Manter uma rotina organizada é o primeiro passo para o sucesso. O **Gerenciador de Tarefas** é uma aplicação interativa construída no modelo *Single-Page Application* com Vanilla JavaScript, estruturada através de um intuitivo **quadro Kanban**. Ele resolve o problema da desorganização diária permitindo o cadastro rápido de atividades, distribuição por grau de esforço, filtragem em tempo real e acompanhamento de status.
 
 > 💡 **Diferencial:** Os dados não são perdidos! A aplicação utiliza o `localStorage` do navegador para garantir a persistência das informações de forma 100% *client-side*, sem necessidade de um backend ou banco de dados.
 
@@ -25,21 +25,23 @@ Manter uma rotina organizada é o primeiro passo para o sucesso. O **Gerenciador
 
 ## ✨ Features Principais
 
-- **📝 CRUD de Tarefas:** Crie, leia, atualize o status (concluir) e exclua tarefas.
-- **🏷️ Categorização e Prioridades:** Defina a urgência (Alta, Média, Baixa) e a categoria de cada atividade.
-- **💾 Persistência Local:** Sincronização automática e reativa com o `localStorage`.
-- **📊 Dashboard de Indicadores:** Resumo dinâmico (Total, Pendentes, Concluídas).
-- **🔍 Filtros Avançados:** Visualize apenas o que importa no momento filtrando por situação e categorias.
-- **🛡️ Validação de Dados:** Formulários inteligentes que previnem o cadastro de dados vazios ou inconsistentes.
+- **📋 Quadro Kanban Interativo:** Organização visual distribuída em colunas segmentadas por nível de dificuldade (*Fácil*, *Moderado*, *Difícil*) e coluna dedicada para tarefas *Concluídas*.
+- **📝 CRUD Completo:** Cadastro com validação de campos obrigatórios, exclusão com diálogo de confirmação e alternância de status (*Concluir* / *Desfazer*).
+- **🏷️ Categorização e Complexidade:** Classificação de atividades por grau de esforço e categorias extraídas dinamicamente dos dados cadastrados.
+- **💾 Persistência Local Resiliente:** Sincronização automática com o `localStorage` do navegador, com tratamento defensivo de erros (`try/catch`).
+- **📊 Dashboard de Indicadores:** Contadores globais em tempo real (Total de tarefas, Pendentes e Concluídas).
+- **🔍 Filtros Dinâmicos e Não Destrutivos:** Filtragem combinada por situação e por categoria atuando exclusivamente na camada de exibição.
+- **📭 Gestão de Estado Vazio (Empty State):** Interface com feedback orientador e acessibilidade (`aria-live`) quando nenhuma tarefa está cadastrada.
+- **🛡️ Segurança e Performance:** Sanitização contra injeções de script (proteção XSS) e otimização de memória via Delegação de Eventos (*Event Delegation*).
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-A arquitetura foi pensada para ser leve, sem dependências externas, focando nos fundamentos da Web:
+A arquitetura foi concebida para ser leve, acessível e sem dependências externas, explorando o potencial dos fundamentos da Web moderna:
 
-- **Frontend:** HTML5 Semântico, CSS3 (Flexbox/Grid para Layout)
-- **Lógica e Interatividade:** JavaScript ES6+ (Manipulação de DOM, Eventos, Arrays, Objetos)
+- **Frontend:** HTML5 Semântico, CSS3 (CSS Grid, Flexbox e Variáveis CSS personalizadas)
+- **Lógica e Interatividade:** JavaScript ES6+ (Delegação de Eventos, UUIDs, Manipulação de DOM nativa e Proteção XSS)
 - **Armazenamento:** Web Storage API (`localStorage`)
 
 ---
