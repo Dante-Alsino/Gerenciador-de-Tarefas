@@ -8,11 +8,23 @@
 </head>
 <body>
     <header class="app-header">
-        <h1>Gerenciador de Tarefas</h1>
+        <div class="header-brand">
+            <h1>Gerenciador de Tarefas</h1>
+            <button id="btn-theme-toggle" class="btn-theme-toggle" type="button" aria-label="Alternar modo escuro ou claro">
+                <span id="theme-icon">🌙</span> <span id="theme-text">Escuro</span>
+            </button>
+        </div>
+
         <div class="dashboard" id="dashboard">
             <div class="stat"><span>Total:</span> <strong id="stat-total">0</strong></div>
             <div class="stat"><span>Pendentes:</span> <strong id="stat-pending">0</strong></div>
             <div class="stat"><span>Concluídas:</span> <strong id="stat-done">0</strong></div>
+            <div class="stat stat-progress">
+                <span>Progresso:</span> <strong id="stat-progress">0%</strong>
+                <div class="progress-bar-container" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -47,7 +59,12 @@
         </form>
     </section>
 
-    <section class="task-filters" aria-label="Filtros de tarefas">
+    <section class="task-filters" aria-label="Filtros e ordenação de tarefas">
+        <div class="filter-group filter-search">
+            <label for="filter-search">Buscar:</label>
+            <input type="search" id="filter-search" placeholder="Buscar por descrição..." aria-label="Buscar por descrição">
+        </div>
+
         <div class="filter-group">
             <label for="filter-status">Situação:</label>
             <select id="filter-status">
@@ -61,6 +78,17 @@
             <label for="filter-category">Categoria:</label>
             <select id="filter-category">
                 <option value="todas">Todas</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-sort">Ordenar por:</label>
+            <select id="filter-sort">
+                <option value="padrao">Padrão</option>
+                <option value="data-asc">Prazo mais próximo</option>
+                <option value="data-desc">Prazo mais distante</option>
+                <option value="dificuldade-asc">Dificuldade (Fácil → Difícil)</option>
+                <option value="dificuldade-desc">Dificuldade (Difícil → Fácil)</option>
             </select>
         </div>
     </section>
@@ -106,6 +134,7 @@
         <section class="column column-concluido">
             <div class="column-header">
                 <h2>Concluído</h2>
+                <button id="btn-clear-done" class="btn-clear-done" type="button" title="Excluir todas as tarefas concluídas" disabled>Limpar</button>
             </div>
             <div class="column-content" id="col-concluido">
                 <!-- Cards renderizados via JS -->

@@ -4,6 +4,10 @@
     --text-main: #333333;
     --text-muted: #666666;
     --border-color: #e0e4e8;
+    --input-bg: #f9fafb;
+    --input-bg-focus: #ffffff;
+    --column-bg: #e5e7eb;
+    --card-category-bg: #f3f4f6;
     
     --color-primary: #2563eb;
     --color-primary-hover: #1d4ed8;
@@ -16,6 +20,22 @@
     --radius: 8px;
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Tema Escuro (Dark Mode) */
+[data-theme="dark"] {
+    --bg-page: #0f172a;
+    --bg-surface: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --input-bg: #0f172a;
+    --input-bg-focus: #1e293b;
+    --column-bg: #1e293b;
+    --card-category-bg: #334155;
+
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -32,6 +52,7 @@ body {
     padding: 24px;
     max-width: 1400px;
     margin: 0 auto;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* --- Header & Dashboard --- */
@@ -44,10 +65,36 @@ body {
     gap: 16px;
 }
 
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 .app-header h1 {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-main);
+}
+
+.btn-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+}
+
+.btn-theme-toggle:hover {
+    background: var(--border-color);
 }
 
 .dashboard {
@@ -58,6 +105,8 @@ body {
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border-color);
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .stat {
@@ -71,13 +120,37 @@ body {
     margin-left: 6px;
 }
 
+/* Progresso e barra */
+.stat-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 130px;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--color-facil);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
 /* --- Formulário de Criação --- */
 .task-creation {
     background: var(--bg-surface);
     padding: 24px;
     border-radius: var(--radius);
     box-shadow: var(--shadow-md);
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     border: 1px solid var(--border-color);
 }
 
@@ -106,15 +179,16 @@ input, select {
     border-radius: 6px;
     font-family: inherit;
     font-size: 0.95rem;
-    background-color: #f9fafb;
+    background-color: var(--input-bg);
+    color: var(--text-main);
     transition: all 0.2s ease;
 }
 
 input:focus, select:focus {
     outline: none;
     border-color: var(--color-primary);
-    background-color: #fff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background-color: var(--input-bg-focus);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .btn-primary {
@@ -126,7 +200,7 @@ input:focus, select:focus {
     cursor: pointer;
     font-weight: 600;
     font-size: 0.95rem;
-    height: 42px; /* Alinha perfeitamente com os inputs */
+    height: 42px;
     transition: background-color 0.2s;
 }
 
@@ -134,7 +208,7 @@ input:focus, select:focus {
     background-color: var(--color-primary-hover);
 }
 
-/* --- Barra de Filtros --- */
+/* --- Barra de Filtros e Busca --- */
 .task-filters {
     background: var(--bg-surface);
     padding: 16px 24px;
@@ -143,7 +217,7 @@ input:focus, select:focus {
     margin-bottom: 28px;
     border: 1px solid var(--border-color);
     display: flex;
-    gap: 32px;
+    gap: 20px;
     align-items: center;
     flex-wrap: wrap;
 }
@@ -151,19 +225,27 @@ input:focus, select:focus {
 .filter-group {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .filter-group label {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-main);
+    white-space: nowrap;
 }
 
 .filter-group select {
-    min-width: 170px;
-    background-color: #fff;
+    min-width: 150px;
     cursor: pointer;
+}
+
+.filter-search {
+    flex: 1 1 220px;
+}
+
+.filter-search input {
+    width: 100%;
 }
 
 /* --- Kanban Board --- */
@@ -202,14 +284,24 @@ input:focus, select:focus {
     color: var(--text-muted);
 }
 
+/* --- Colunas --- */
 .column {
-    background: #e5e7eb;
+    background: var(--column-bg);
     border-radius: var(--radius);
     padding: 16px;
     min-height: 450px;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 3px solid;
 }
 
 .column-header h2 {
@@ -218,15 +310,36 @@ input:focus, select:focus {
     font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--text-main);
-    padding-bottom: 12px;
-    border-bottom: 3px solid;
 }
 
-/* Cores das colunas */
-.column-facil .column-header h2 { border-bottom-color: var(--color-facil); }
-.column-moderado .column-header h2 { border-bottom-color: var(--color-moderado); }
-.column-dificil .column-header h2 { border-bottom-color: var(--color-dificil); }
-.column-concluido .column-header h2 { border-bottom-color: var(--color-concluido); }
+.column-facil .column-header { border-bottom-color: var(--color-facil); }
+.column-moderado .column-header { border-bottom-color: var(--color-moderado); }
+.column-dificil .column-header { border-bottom-color: var(--color-dificil); }
+.column-concluido .column-header { border-bottom-color: var(--color-concluido); }
+
+.btn-clear-done {
+    background: transparent;
+    color: var(--color-dificil);
+    border: 1px solid var(--color-dificil);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-clear-done:hover:not(:disabled) {
+    background: var(--color-dificil);
+    color: #fff;
+}
+
+.btn-clear-done:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
 
 .column-content {
     display: flex;
@@ -246,6 +359,9 @@ input:focus, select:focus {
     flex-direction: column;
     gap: 12px;
     transition: transform 0.2s, box-shadow 0.2s;
+    border-top: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .card:hover {
@@ -257,11 +373,12 @@ input:focus, select:focus {
 .card.moderado { border-left-color: var(--color-moderado); }
 .card.dificil { border-left-color: var(--color-dificil); }
 
-/* Estilo para tarefas concluídas */
+/* Tarefas concluídas */
 .card.concluida {
     border-left-color: var(--color-concluido);
     opacity: 0.65;
 }
+
 .card.concluida .card-title {
     text-decoration: line-through;
     color: var(--text-muted);
@@ -279,11 +396,12 @@ input:focus, select:focus {
     font-size: 1rem;
     line-height: 1.3;
     word-break: break-word;
+    color: var(--text-main);
 }
 
 .card-category {
     font-size: 0.75rem;
-    background: #f3f4f6;
+    background: var(--card-category-bg);
     padding: 4px 8px;
     border-radius: 12px;
     color: var(--text-muted);
@@ -323,8 +441,8 @@ input:focus, select:focus {
 .btn-undo { color: var(--color-moderado); }
 .btn-delete { color: var(--color-dificil); }
 
-/* --- Responsividade (Mobile-First approach gracefully degrading) --- */
-@media (max-width: 1024px) {
+/* --- Responsividade --- */
+@media (max-width: 1100px) {
     .kanban-board {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -336,14 +454,30 @@ input:focus, select:focus {
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .app-header {
         flex-direction: column;
         align-items: flex-start;
     }
+    .header-brand {
+        width: 100%;
+        justify-content: space-between;
+    }
     .dashboard {
         width: 100%;
         justify-content: space-between;
+    }
+    .task-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .filter-group select,
+    .filter-search input {
+        flex: 1;
     }
     .kanban-board {
         grid-template-columns: 1fr;
