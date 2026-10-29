@@ -12,17 +12,16 @@
     --color-primary: #2563eb;
     --color-primary-hover: #1d4ed8;
     
-    --color-facil: #10b981;    /* Verde suave */
-    --color-moderado: #f59e0b; /* Laranja/Amarelo */
-    --color-dificil: #ef4444;  /* Vermelho */
-    --color-concluido: #9ca3af;/* Cinza */
+    --color-facil: #10b981;
+    --color-moderado: #f59e0b;
+    --color-dificil: #ef4444;
+    --color-concluido: #9ca3af;
 
     --radius: 8px;
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Tema Escuro (Dark Mode) */
 [data-theme="dark"] {
     --bg-page: #0f172a;
     --bg-surface: #1e293b;
@@ -55,7 +54,7 @@ body {
     transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* --- Header & Dashboard --- */
+/* Cabeçalho e Dashboard */
 .app-header {
     display: flex;
     justify-content: space-between;
@@ -120,7 +119,6 @@ body {
     margin-left: 6px;
 }
 
-/* Progresso e barra */
 .stat-progress {
     display: flex;
     flex-direction: column;
@@ -144,7 +142,7 @@ body {
     transition: width 0.3s ease;
 }
 
-/* --- Formulário de Criação --- */
+/* Formulário de Cadastro */
 .task-creation {
     background: var(--bg-surface);
     padding: 24px;
@@ -208,7 +206,7 @@ input:focus, select:focus {
     background-color: var(--color-primary-hover);
 }
 
-/* --- Barra de Filtros e Busca --- */
+/* Filtros e Busca */
 .task-filters {
     background: var(--bg-surface);
     padding: 16px 24px;
@@ -248,7 +246,7 @@ input:focus, select:focus {
     width: 100%;
 }
 
-/* --- Kanban Board --- */
+/* Quadro Kanban e Colunas */
 .kanban-board {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -256,7 +254,6 @@ input:focus, select:focus {
     align-items: start;
 }
 
-/* --- Estado Vazio (Situação Inicial) --- */
 .empty-state {
     grid-column: 1 / -1;
     background: var(--bg-surface);
@@ -284,7 +281,6 @@ input:focus, select:focus {
     color: var(--text-muted);
 }
 
-/* --- Colunas --- */
 .column {
     background: var(--column-bg);
     border-radius: var(--radius);
@@ -348,7 +344,7 @@ input:focus, select:focus {
     flex-grow: 1;
 }
 
-/* --- Task Card --- */
+/* Cartões (Cards) */
 .card {
     background: var(--bg-surface);
     border-radius: 6px;
@@ -373,7 +369,6 @@ input:focus, select:focus {
 .card.moderado { border-left-color: var(--color-moderado); }
 .card.dificil { border-left-color: var(--color-dificil); }
 
-/* Tarefas concluídas */
 .card.concluida {
     border-left-color: var(--color-concluido);
     opacity: 0.65;
@@ -441,7 +436,7 @@ input:focus, select:focus {
 .btn-undo { color: var(--color-moderado); }
 .btn-delete { color: var(--color-dificil); }
 
-/* --- Responsividade --- */
+/* Responsividade */
 @media (max-width: 1100px) {
     .kanban-board {
         grid-template-columns: repeat(2, 1fr);

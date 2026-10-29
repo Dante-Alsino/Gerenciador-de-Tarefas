@@ -1,22 +1,8 @@
-/**
- * Gerenciador de Tarefas - Kanban Minimalista
- * Implementação Completa: Fases 1 a 6
- * - Fase 1: Estrutura & Estilo
- * - Fase 2: Lógica Base
- * - Fase 3: Interatividade (Concluir, Desfazer, Excluir)
- * - Fase 4: Indicadores & Filtros
- * - Fase 5: Persistência no LocalStorage e Situação Inicial
- * - Fase 6: Desafios Opcionais (Dark/Light Mode, Busca em Tempo Real, Ordenação, Limpar Concluídas, Barra de Progresso)
- */
-
-// Chaves de armazenamento no LocalStorage
 const STORAGE_KEY = 'kanban_tasks_app';
 const THEME_KEY = 'kanban_theme_preference';
 
-// --- 1. Estado da Aplicação (State) ---
 let tasks = [];
 
-// Estado reativo dos filtros e ordenação
 const currentFilters = {
     status: 'todas',
     category: 'todas',
@@ -24,7 +10,6 @@ const currentFilters = {
     sort: 'padrao'
 };
 
-// --- 2. Elementos do DOM em Cache ---
 const DOM = {
     form: document.getElementById('task-form'),
     board: document.querySelector('.kanban-board'),
@@ -61,7 +46,7 @@ const DOM = {
     }
 };
 
-// --- 3. Camada de Persistência (Local Storage) ---
+/* Armazenamento (LocalStorage) */
 
 function saveTasksToStorage() {
     try {
@@ -86,14 +71,14 @@ function loadTasksFromStorage() {
     }
 }
 
-// --- 4. Motor de Tema (Dark Mode / Light Mode) ---
+/* Gerenciamento de Tema (Dark/Light Mode) */
 
 function initTheme() {
     const savedTheme = localStorage.getItem(THEME_KEY);
     if (savedTheme) {
         applyTheme(savedTheme, false);
     } else {
-        // Respeita a preferência do sistema operacional do usuário
+        // Respeita a preferência do sistema operacional caso não haja escolha salva
         const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         applyTheme(systemPrefersDark ? 'dark' : 'light', false);
     }
@@ -121,7 +106,7 @@ DOM.themeToggle.addEventListener('click', function() {
     applyTheme(newTheme, true);
 });
 
-// --- 5. Dashboard, Indicadores e Progresso ---
+/* Interface de Indicadores e Filtros */
 
 function updateDashboard() {
     const total = tasks.length;
@@ -135,7 +120,6 @@ function updateDashboard() {
     DOM.stats.progress.textContent = `${percentage}%`;
     DOM.stats.progressFill.style.width = `${percentage}%`;
 
-    // Habilita ou desabilita o botão "Limpar Concluídas"
     if (DOM.btnClearDone) {
         DOM.btnClearDone.disabled = done === 0;
     }
@@ -163,7 +147,7 @@ function updateCategoryFilterOptions() {
     }
 }
 
-// --- 6. Ações do Usuário (Adicionar, Concluir, Excluir, Limpar Concluídas) ---
+/* Ações de Tarefas */
 
 DOM.form.addEventListener('submit', function(event) {
     event.preventDefault();
@@ -221,7 +205,6 @@ function deleteTask(id) {
     renderBoard();
 }
 
-// Botão para excluir todas as concluídas em lote
 DOM.btnClearDone.addEventListener('click', function() {
     const doneTasksCount = tasks.filter(t => t.status === 'concluida').length;
     if (doneTasksCount === 0) return;
@@ -237,7 +220,7 @@ DOM.btnClearDone.addEventListener('click', function() {
     renderBoard();
 });
 
-// Event Delegation para botões de ação nos cards
+// Event Delegation: listener único no container para tratar ações dos cards
 DOM.board.addEventListener('click', function(event) {
     const actionButton = event.target.closest('button[data-action]');
     if (!actionButton) return;
@@ -251,8 +234,6 @@ DOM.board.addEventListener('click', function(event) {
         deleteTask(id);
     }
 });
-
-// --- 7. Eventos de Busca, Filtro e Ordenação ---
 
 DOM.filters.status.addEventListener('change', function(event) {
     currentFilters.status = event.target.value;
@@ -274,10 +255,9 @@ DOM.filters.sort.addEventListener('change', function(event) {
     renderBoard();
 });
 
-// --- 8. Renderização Inteligente (Filtros + Ordenação) ---
+/* Renderização */
 
 function renderBoard() {
-    // 1. Estado Inicial Vazio
     if (tasks.length === 0) {
         DOM.emptyState.classList.remove('hidden');
         DOM.columnsList.forEach(col => col.style.display = 'none');
@@ -287,12 +267,10 @@ function renderBoard() {
     DOM.emptyState.classList.add('hidden');
     DOM.columnsList.forEach(col => col.style.display = 'flex');
 
-    // 2. Limpa colunas
     Object.values(DOM.columns).forEach(column => {
         column.innerHTML = '';
     });
 
-    // 3. Aplica Filtros (Situação, Categoria e Busca por Texto)
     let visibleTasks = tasks.filter(task => {
         const matchesStatus =
             currentFilters.status === 'todas' ||
@@ -311,7 +289,7 @@ function renderBoard() {
         return matchesStatus && matchesCategory && matchesSearch;
     });
 
-    // 4. Aplica Ordenação
+    // Peso numérico para ordenação comparativa por nível de dificuldade
     const difficultyWeight = { facil: 1, moderado: 2, dificil: 3 };
 
     if (currentFilters.sort === 'data-asc') {
@@ -324,7 +302,6 @@ function renderBoard() {
         visibleTasks.sort((a, b) => difficultyWeight[b.dificuldade] - difficultyWeight[a.dificuldade]);
     }
 
-    // 5. Renderização dos cards filtrados e ordenados
     visibleTasks.forEach(task => {
         const isDone = task.status === 'concluida';
         const card = document.createElement('article');
@@ -365,7 +342,6 @@ function renderBoard() {
     });
 }
 
-// --- 9. Inicialização Geral (Bootstrap) ---
 function init() {
     initTheme();
     loadTasksFromStorage();

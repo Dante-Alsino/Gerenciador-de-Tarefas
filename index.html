@@ -94,51 +94,38 @@
     </section>
 
     <main class="kanban-board">
-        <!-- Mensagem de Situação Inicial (Exibida quando não há tarefas cadastradas) -->
         <div id="empty-state" class="empty-state" role="status" aria-live="polite">
             <p class="empty-title">Nenhuma tarefa cadastrada.</p>
             <p class="empty-subtitle">Adicione uma tarefa para começar!</p>
         </div>
 
-        <!-- Coluna Fácil -->
         <section class="column column-facil">
             <div class="column-header">
                 <h2>Fácil</h2>
             </div>
-            <div class="column-content" id="col-facil">
-                <!-- Cards renderizados via JS -->
-            </div>
+            <div class="column-content" id="col-facil"></div>
         </section>
 
-        <!-- Coluna Moderado -->
         <section class="column column-moderado">
             <div class="column-header">
                 <h2>Moderado</h2>
             </div>
-            <div class="column-content" id="col-moderado">
-                <!-- Cards renderizados via JS -->
-            </div>
+            <div class="column-content" id="col-moderado"></div>
         </section>
 
-        <!-- Coluna Difícil -->
         <section class="column column-dificil">
             <div class="column-header">
                 <h2>Difícil</h2>
             </div>
-            <div class="column-content" id="col-dificil">
-                <!-- Cards renderizados via JS -->
-            </div>
+            <div class="column-content" id="col-dificil"></div>
         </section>
 
-        <!-- Coluna Concluído -->
         <section class="column column-concluido">
             <div class="column-header">
                 <h2>Concluído</h2>
                 <button id="btn-clear-done" class="btn-clear-done" type="button" title="Excluir todas as tarefas concluídas" disabled>Limpar</button>
             </div>
-            <div class="column-content" id="col-concluido">
-                <!-- Cards renderizados via JS -->
-            </div>
+            <div class="column-content" id="col-concluido"></div>
         </section>
     </main>
 
